@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"github.com/MikelSot/Ed-api/domain"
 	"github.com/MikelSot/Ed-api/interfaces"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
@@ -23,26 +23,31 @@ func (c course) create(e echo.Context) error {
 		res := newResponse(Error, "Error en la estructura", nil)
 		return e.JSON(http.StatusBadRequest,res)
 	}
-
 	err = c.data.Create(&data)
 	if err != nil{
 		res := newResponse(Error, "Hubo un problema", nil)
 		return e.JSON(http.StatusInternalServerError,res)
 	}
 
-	res := newResponse(Error, "ok", nil)
+	res := newResponse(Message, "ok", nil)
 	return  e.JSON(http.StatusCreated, res)
 }
 
 func (c course) update (e echo.Context) error{
+	id, err := strconv.Atoi(e.Param("id"))
+	if err != nil{
+		res := newResponse(Error, "Id no valido", nil)
+		return e.JSON(http.StatusBadRequest, res)
+	}
+
 	data := domain.Course{}
-	err := e.Bind(&data)
+	err = e.Bind(&data)
 	if err != nil{
 		res := newResponse(Error, "Error en la estructura", nil)
 		return e.JSON(http.StatusBadRequest,res)
 	}
 
-	err = c.data.Update(&data)
+	err = c.data.Update(id, &data)
 	if err != nil{
 		res := newResponse(Error, "Hubo un problema al actualizar este registro", nil)
 		return e.JSON(http.StatusInternalServerError,res)
@@ -59,7 +64,7 @@ func (c course) delete(e echo.Context) error{
 		return e.JSON(http.StatusBadRequest, res)
 	}
 
-	err = c.data.Delete(uint(id))
+	err = c.data.Delete(id)
 	if err != nil {
 		res := newResponse(Error, err.Error(), nil)
 		return e.JSON(http.StatusBadRequest, res)
@@ -76,7 +81,7 @@ func (c course) getById(e echo.Context) error{
 		return e.JSON(http.StatusBadRequest, res)
 	}
 
-	course, err := c.data.GetByID(uint(id))
+	course, err := c.data.GetByID(id)
 	if err != nil {
 		res := newResponse(Error, err.Error(), nil)
 		return e.JSON(http.StatusBadRequest, res)
