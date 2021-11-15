@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"github.com/MikelSot/Ed-api/interfaces"
-	"github.com/MikelSot/Ed-api/middleware"
 	"github.com/labstack/echo"
 )
 
@@ -18,7 +17,6 @@ func NewRoute(e *echo.Echo, d interfaces.Data) *route {
 func (r route) Routes()  {
 	handler := newCourse(r.data)
 	course := r.echo.Group("/v1/course")
-	course.Use(middleware.Log)
 
 	course.POST("/create", handler.create)
 	course.PUT("/create", handler.update)
