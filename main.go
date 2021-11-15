@@ -1,1 +1,9 @@
-package Ed_api
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	fmt.Println()
+}
